@@ -1,0 +1,15 @@
+{
+  "name": "payment-service",
+  "version": "1.0.0",
+  "description": "Serviço de Pagamento - simula o processamento de pagamento",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "tenzin-ecommerce-microservices": "file:../.."
+  }
+}

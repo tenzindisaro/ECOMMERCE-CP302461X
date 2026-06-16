@@ -1,0 +1,185 @@
+GUIA DE TESTES - TENZIN E-COMMERCE (THUNDER CLIENT)
+
+Antes de começar:
+1. Abra o terminal na raiz do projeto.
+2. Execute:
+   npm run start:all
+3. Verifique se os 5 serviços estão rodando.
+
+====================================
+HEALTH CHECKS
+====================================
+
+1) Product Service
+GET http://localhost:3001/health
+
+2) User Service
+GET http://localhost:3002/health
+
+3) Inventory Service
+GET http://localhost:3003/health
+
+4) Payment Service
+GET http://localhost:3004/health
+
+5) Order Service
+GET http://localhost:3005/health
+
+====================================
+CENÁRIO 1 - SUCESSO
+====================================
+
+6) Criar Produto
+POST http://localhost:3001/products
+
+Body:
+{
+  "name": "Camiseta Tenzin",
+  "description": "Algodão premium",
+  "price": 50
+}
+
+Resposta esperada:
+- Produto criado com ID.
+
+------------------------------------
+
+7) Criar Usuário
+POST http://localhost:3002/users
+
+Body:
+{
+  "name": "Siddarta",
+  "email": "sid@example.com"
+}
+
+Resposta esperada:
+- Usuário criado com ID.
+
+------------------------------------
+
+8) Definir Estoque
+PUT http://localhost:3003/inventory/1
+
+Body:
+{
+  "quantity": 10
+}
+
+Resposta esperada:
+{
+  "productId": 1,
+  "quantity": 10
+}
+
+------------------------------------
+
+9) Criar Pedido
+POST http://localhost:3005/orders
+
+Body:
+{
+  "userId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+Resposta esperada:
+- Pedido criado.
+- Status: PAGO.
+
+Explicação:
+O Order Service valida usuário, consulta produto,
+verifica estoque, processa pagamento e atualiza o estoque.
+
+------------------------------------
+
+10) Consultar Pedido
+GET http://localhost:3005/orders/1
+
+Resposta esperada:
+- Pedido com status PAGO.
+
+------------------------------------
+
+11) Conferir Estoque
+GET http://localhost:3003/inventory/1
+
+Resposta esperada:
+{
+  "quantity": 8
+}
+
+Explicação:
+10 unidades iniciais - 2 compradas = 8 restantes.
+
+====================================
+CENÁRIO 2 - FALHA CONTROLADA
+====================================
+
+12) Pedido com Estoque Insuficiente
+POST http://localhost:3005/orders
+
+Body:
+{
+  "userId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 9999
+    }
+  ]
+}
+
+Resposta esperada:
+- Erro: Estoque insuficiente
+- HTTP 422
+
+Explicação:
+O Order Service interrompe o fluxo antes da criação
+do pedido porque não há estoque suficiente.
+
+====================================
+ENDPOINTS AVULSOS
+====================================
+
+GET http://localhost:3001/products
+
+GET http://localhost:3001/products/1
+
+GET http://localhost:3002/users/1
+
+POST http://localhost:3004/payments
+
+Body:
+{
+  "orderId": 1,
+  "amount": 100
+}
+
+====================================
+PERGUNTAS IMPORTANTES PARA A PROVA
+====================================
+
+- Qual o papel do Order Service?
+R: Ele é o orquestrador do sistema.
+
+- Como os microsserviços se comunicam?
+R: Via REST/HTTP.
+
+- Por que cada serviço possui seu próprio banco?
+R: Para isolamento de dados e baixo acoplamento.
+
+- Por que usar SQLite?
+R: Porque é leve, não precisa de servidor e facilita
+a demonstração dos conceitos.
+
+- O que acontece se o pagamento for recusado?
+R: O pedido fica CANCELADO.
+
+- O que acontece se o estoque for insuficiente?
+R: O pedido não é criado e retorna erro 422.

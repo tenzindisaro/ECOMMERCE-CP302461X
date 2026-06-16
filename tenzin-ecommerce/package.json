@@ -1,0 +1,18 @@
+{
+  "name": "tenzin-ecommerce-microservices",
+  "version": "1.0.0",
+  "description": "Sistema de e-commerce com arquitetura de microsserviços (Node + Express + SQLite)",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix services/product-service && npm install --prefix services/user-service && npm install --prefix services/inventory-service && npm install --prefix services/payment-service && npm install --prefix services/order-service",
+    "start:product": "npm start --prefix services/product-service",
+    "start:user": "npm start --prefix services/user-service",
+    "start:inventory": "npm start --prefix services/inventory-service",
+    "start:payment": "npm start --prefix services/payment-service",
+    "start:order": "npm start --prefix services/order-service",
+    "start:all": "concurrently -n product,user,inventory,payment,order -c green,blue,yellow,magenta,cyan \"npm:start:product\" \"npm:start:user\" \"npm:start:inventory\" \"npm:start:payment\" \"npm:start:order\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
